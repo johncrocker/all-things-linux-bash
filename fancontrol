@@ -76,7 +76,7 @@ if [ "$FAN_CONTROL_PIN" = "" ]; then
 fi
 
 if [ "$FAN_TEMPERATURE_THRESHOLD" = "" ]; then
-	export FAN_TEMPERATURE_THRESHOLD="60"
+	export FAN_TEMPERATURE_THRESHOLD="50"
 fi
 
 cmd="$1"
