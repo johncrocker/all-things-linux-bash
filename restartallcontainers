@@ -1,0 +1,10 @@
+#/bin/bash
+
+echo Start $(date)
+
+for containername in $(docker ps --format "{{.Names}}"); do
+	echo Restarting container $containername
+	sudo docker restart $containername
+done
+
+echo Finished $(date)

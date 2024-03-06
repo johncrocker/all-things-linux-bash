@@ -1,0 +1,14 @@
+#!/bin/bash
+
+case "$1" in
+mount)
+	sudo rclone mount onedrive:/RaspberryPi /media/onedrive --daemon
+	exit 0
+	;;
+umount)
+	sudo fusermount -u /media/onedrive
+	exit 0
+	;;
+esac
+
+exit 1

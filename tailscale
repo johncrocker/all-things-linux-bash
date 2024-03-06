@@ -1,0 +1,8 @@
+#/bin/bash
+
+
+if [ -n "$(docker ps -f "name=tailscaled" -f "status=running" -q )" ]; then
+docker exec -i -t tailscaled tailscale "$@"
+else
+echo Tailscale is not running
+fi

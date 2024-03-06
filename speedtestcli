@@ -1,0 +1,2 @@
+#!/bin/bash
+speedtest -s 55637 -f json-pretty > $HOME/logs/speedtest.json

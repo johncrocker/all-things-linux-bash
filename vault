@@ -1,0 +1,9 @@
+
+#/bin/bash
+
+
+if [ -n "$(docker ps -f "name=vault" -f "status=running" -q )" ]; then
+docker exec -i -t vault vault "$@" 
+else
+echo Vault is not running
+fi

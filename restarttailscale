@@ -1,0 +1,5 @@
+#/bin/bash
+routes=$(ip -o -f inet route show dev eth0 | sed -n \$p | awk '{print $1}')
+
+sudo tailscale down
+sudo tailscale up --accept-dns=false --advertise-exit-node=true --advertise-routes=$routes
