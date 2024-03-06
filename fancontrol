@@ -109,7 +109,7 @@ status)
 	fi
 
 	if [[ $fanstatus == *"level=1"* ]]; then
-		echo "Fan is currently operatimg."
+		echo "Fan is currently operating."
 		if [[ "$result" -eq 1 ]]; then
 			echo "Fan shoukd be operating."
 			exit 0
