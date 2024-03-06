@@ -97,6 +97,20 @@ current_temp="${current_temp/\'C/}"
 result=$(echo "$current_temp >= $temp_threshold" | bc)
 
 case $cmd in
+service-start)
+	sudo systemctl start fancontrol
+ 	sudo systemctl status  fancontrol
+ 	exit 0
+	;;
+service-stop)
+ 	sudo systemctl stop fancontrol
+	sudo systemctl status  fancontrol
+ 	exit 0
+	;;
+service-logs)
+	sudo systemctl status  fancontrol
+	exit 0
+	;;
 daemon)
 	while true
 	do
