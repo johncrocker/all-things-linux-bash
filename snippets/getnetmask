@@ -1,0 +1,2 @@
+#/bin/bash
+routes=$(ip -o -f inet route show dev eth0 | sed -n \$p | awk '{print $1}')

@@ -1,0 +1,9 @@
+#!/bin/bash
+docker login -u $DOCKERUSER -p $DOCKERPAT
+
+if [ $? -ne 0 ]; then
+	echo "Authorisation error"
+	exit 1
+fi
+
+echo "Authorised as $DOCKERUSER"

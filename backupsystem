@@ -1,0 +1,59 @@
+#/bin/bash
+
+sudo sntp -s uk.pool.ntp.org
+
+echo Start $(date)
+
+echo Creating directories
+sudo mkdir /media/external/backups
+sudo mkdir /media/external/backups/docker
+# sudo rm /media/external/backups/docker/*
+
+today="$(date +%u)"
+
+if [ -n "$(docker ps -f "name=pihole" -f "status=running" -q)" ]; then
+	echo Runing PiHole Teleport
+	docker exec pihole pihole -a -t /etc/pihole/teleport.tar.gz
+	sudo mv /var/lib/docker-data/volumes/pihole-stack_pihole/_data/teleport.tar.gz /media/external/backups/teleport.tar.gz
+
+	if [ "${today}" -eq 7 ]; then
+		echo Clearing PiHole FTL Database as it is Sunday
+		docker stop pihole
+		sudo rm /var/lib/docker-data/volumes/pihole-stack_pihole/_data/pihole-FTL.db
+		docker start pihole
+	else
+		echo Skipping Clearing PiHole FTL Database as it is NOT Sunday
+	fi
+else
+	echo Skipping Pi-Hole steps. Pi-Hole is not running!!
+fi
+
+echo Backing up Docker Containers
+
+for containername in $(docker ps --format "{{.Names}}" -a); do
+	echo Backing up container $containername
+	sudo docker export $containername | gzip >/root/container-$containernane.tar.gz
+	sudo mv -f /root/container-$containernane.tar.gz /media/external/backups/docker/container-$containername.tar.gz
+done
+
+echo Backing up Docker Volumes
+
+for volumename in $(docker volume ls -q); do
+	echo Backing up volume $volumename
+
+	sudo rm /media/external/backups/docker/volume-$volumename.tar.gz
+
+	sudo docker run --rm \
+		--mount source=$volumename,target=/$volumename \
+		-v /media/external/backups/docker:/backup \
+		busybox \
+		tar -czvf /backup/volume-$volumename.tar.gz $volumename
+
+done
+
+echo Backing up Home Directories
+sudo tar -zcf /media/external/backups/docker.tgz /home/jcrocker/docker
+sudo tar -zcf /media/external/backups/docker-private.tgz /home/jcrocker/docker-private
+sudo tar -zcf /media/external/backups/scripts.tgz /usr/local/share/bin
+
+echo Finish $(date)

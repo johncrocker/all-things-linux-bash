@@ -1,0 +1,4 @@
+#/bin/bash
+docker stop pihole
+sudo rm /var/lib/docker-data/volumes/pihole-stack_pihole//_data/pihole-FTL.db
+docker start pihole

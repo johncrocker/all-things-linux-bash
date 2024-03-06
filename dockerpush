@@ -1,0 +1,19 @@
+#!/bin/bash
+docker login -u $DOCKERUSER -p $DOCKERPAT
+
+if [ $? -ne 0 ]; then
+	echo "Authorisation error"
+	exit 1
+fi
+
+docker build -t $1 .
+
+if [ $? -ne 0 ]; then
+	echo "Ome or more errors oxcurred, aborting."
+	exit 1
+else
+	docker image tag $1 $DOCKERUSER/$1:latest
+	if [ $? -eq 0 ]; then
+		docker image push $DOCKERUSER/$1:latest
+	fi
+fi
