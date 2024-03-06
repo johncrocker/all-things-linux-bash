@@ -97,6 +97,32 @@ current_temp="${current_temp/\'C/}"
 result=$(echo "$current_temp >= $temp_threshold" | bc)
 
 case $cmd in
+daemon)
+	while true
+	do
+		current_temp=$(sudo vcgencmd measure_temp)
+		current_temp="${current_temp/temp=/}"
+		current_temp="${current_temp/\'C/}"
+		result=$(echo "$current_temp >= $temp_threshold" | bc)
+  		fanstatus=$(sudo raspi-gpio get $FAN_CONTROL_PIN)
+		echo "Current=$current_temp'C, Threshold=$temp_threshold'C"
+
+        	if [[ "$result" -eq 1 ]]; then
+  			if [[ $fanstatus == *"level=0"* ]]; then
+				sudo raspi-gpio set $FAN_CONTROL_PIN dh
+                		echo -e "${Red}Temperature is hotter than threshold, Turning on fan..${Colour_Off}"
+			fi
+        	else
+			if [[ $fanstatus == *"level=1"* ]]; then
+				sudo raspi-gpio set $FAN_CONTROL_PIN dl
+                		echo -e "${Blue}Temperature is cooler than threshold,Turning off fan.${Colour_Off}"
+			fi
+        	fi
+
+		sleep 10
+	done
+	exit 0
+	;;
 status)
 	echo "Current Temp $current_temp'C"
 	echo "Threshold Temperature: $temp_threshold'C"
