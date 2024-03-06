@@ -111,7 +111,7 @@ status)
 	if [[ $fanstatus == *"level=1"* ]]; then
 		echo "Fan is currently operating."
 		if [[ "$result" -eq 1 ]]; then
-			echo "Fan shoukd be operating."
+			echo "Fan should be operating."
 			exit 0
 		fi
 		echo -e "${Yellow}WARNING: Fan shouldnt be operating, must be manually overridden.${Colour_Off}"
