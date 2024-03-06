@@ -1,2 +1,2 @@
 # all-things-linux-bash
-All things I do in Linux Badh scripts 
+All things I do in Linux Bash scripts 
