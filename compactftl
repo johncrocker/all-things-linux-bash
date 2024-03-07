@@ -1,8 +1,19 @@
 #/bin/bash
+
+echo Start $(date)
+
 sudo sqlite3 /var/lib/docker-data/volumes/pihole-stack_pihole//_data/pihole-FTL.db "
 DELETE FROM query_storage WHERE timestamp <= strftime('%s', datetime('now', '-7 day'));
+select changes(),total_changes();
 DELETE FROM domain_by_id WHERE id NOT IN (SELECT domain FROM query_storage);
+select changes(),total_changes();
 DELETE FROM client_by_id WHERE id NOT IN (SELECT client FROM query_storage);
+select changes(),total_changes();
 DELETE FROM forward_by_id WHERE id NOT IN (SELECT forward FROM query_storage);
+select changes(),total_changes();
 DELETE FROM addinfo_by_id WHERE id NOT IN (SELECT additional_info FROM query_storage);
-VACUUM;"
+select changes(),total_changes();
+VACUUM;
+"
+
+echo Finish  $(date)
