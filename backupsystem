@@ -42,8 +42,8 @@ for volumename in $(docker volume ls -q); do
 done
 
 echo Backing up Home Directories
-sudo tar -zcf /media/external/backups/docker.tgz /home/jcrocker/docker
+sudo tar -zcf /media/external/backups/docker.tgz /home/jcrocker/src/all-things-docker
 sudo tar -zcf /media/external/backups/docker-private.tgz /home/jcrocker/docker-private
-sudo tar -zcf /media/external/backups/scripts.tgz /usr/local/share/bin
+sudo tar -zcf /media/external/backups/scripts.tgz /home/jcrocker/src/all-things-linux-bash
 
 echo Finish $(date)
