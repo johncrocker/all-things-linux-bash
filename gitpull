@@ -1,0 +1,15 @@
+#!/bin/bash
+for repo in $(find . -type d -name '.git' | sed -r 's|/[^/]+$||' |sort -u);
+do
+	if [ "$repo" != "."]; then
+		cd "$repo"
+	fi
+
+	remote=$(git config --get remote.origin.url)
+	echo "Updating $repo from $remote"
+
+	if [ "$repo" != "."]; then
+		cd ..
+	fi
+
+done
