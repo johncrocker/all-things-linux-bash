@@ -25,4 +25,4 @@ fi
 
 filepath="$1"
 
-formatfile "$filename"
+formatfile "$filepath"
