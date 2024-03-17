@@ -2,7 +2,7 @@
 
 echo Start $( date )
 
-export DESTINATION="/var/lib/docker-data/volumes/unbound-stack_unbound-$1-data/_data"
+export DESTINATION="/var/lib/docker-data/volumes/pihole-stack_unbound-data/_data"
 export FILE_NAME="$DESTINATION/root.hints"
 export FILE_URL="https://www.internic.net/domain/named.root"
 
@@ -20,13 +20,13 @@ then
   echo Saving latest hints to $FILE_NANE
   sudo rm $FILE_NAME.bak
  
-  docker stop unbound-dns-$1
+  docker stop unbound-dns
   echo
   
   sudo cp $FILE_NAME $FILE_NAME.bak
   sudo mv $FILE_NAME.new  $FILE_NAME -f
  
-  docker start unbound-dns-$1
+  docker start unbound-dns
   echo ""
 else
   echo Remote unchanged
