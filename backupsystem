@@ -21,7 +21,11 @@ fi
 echo Backing up Docker Containers
 
 for containername in $(docker ps --format "{{.Names}}" -a | sort); do
-	if [ "$containername" != "webtop" ]; then
+	inexclusions=$(echo "$BACKUP_EXCLUSIONS" | grep -w "$containername")
+
+	if [ -n "$inexclusions" ]; then
+		echo Excluding $containername from backup run as it is in BACKUP_EXCLUSIONS
+	else
 		echo Backing up container $containername
 		sudo docker export $containername | gzip >/tmp/container-$containernane.tar.gz
 		sudo mv -f /tmp/container-$containernane.tar.gz /media/external/backups/docker/container-$containername.tar.gz
