@@ -28,7 +28,7 @@ for containername in $(docker ps --format "{{.Names}}" -a); do
 
 		echo "Backing up container volumes"
 		for volumeid in $(docker inspect --format='{{range .Mounts}}{{if eq .Driver "local"}}{{.Name}} {{end}} {{end}}' $containername ); do
-			echo "Backing up volume $volumeid
+			echo "Backing up volume $volumeid"
 			volumename=$(docker volume ls -f "name=$volumeid" -q | grep -w "$volumeid" )
 			if [ -n "$volumename" ]; then
 				echo "ERROR: Couldnt find $volumeid"
