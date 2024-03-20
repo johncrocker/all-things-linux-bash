@@ -1,12 +1,11 @@
 #/bin/bash
 
-
 echo Start $(date)
 
 if [ ! -d /media/external/backups ]; then
-echo Creating directories
-sudo mkdir /media/external/backups
-sudo mkdir -p /media/external/backups/docker
+	echo Creating directories
+	sudo mkdir /media/external/backups
+	sudo mkdir -p /media/external/backups/docker
 fi
 
 today="$(date +%u)"
@@ -32,18 +31,18 @@ for containername in $(docker ps --format "{{.Names}}" -a | sort); do
 		sudo mv -f /tmp/container-$containernane.tar.gz /media/external/backups/docker/container-$containername.tar.gz
 
 		echo "Backing up container volumes"
-		for volumeid in $(docker inspect --format='{{range .Mounts}}{{if eq .Driver "local"}}{{.Name}} {{end}}{{end}}' $containername | tr " " "\n" | sort ); do
+		for volumeid in $(docker inspect --format='{{range .Mounts}}{{if eq .Driver "local"}}{{.Name}} {{end}}{{end}}' $containername | tr " " "\n" | sort); do
 			echo "Backing up volume $volumeid"
-			volumename=$(docker volume ls -f "name=$volumeid" -q | grep -w "$volumeid" )
+			volumename=$(docker volume ls -f "name=$volumeid" -q | grep -w "$volumeid")
 			if [ -n "$volumename" ]; then
 				echo "Starting backup of $volumename"
 				sudo rm /media/external/backups/docker/volume-$volumename.tar.gz
 
 				sudo docker run --rm \
-				--mount source=$volumename,target=/$volumename \
-				-v /media/external/backups/docker:/backup \
-				busybox \
-				tar -czvf /backup/volume-$volumename.tar.gz $volumename
+					--mount source=$volumename,target=/$volumename \
+					-v /media/external/backups/docker:/backup \
+					busybox \
+					tar -czvf /backup/volume-$volumename.tar.gz $volumename
 
 				echo Finished
 			else
