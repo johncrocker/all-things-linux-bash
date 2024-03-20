@@ -3,10 +3,11 @@
 
 echo Start $(date)
 
+if [ ! -d /media/external/backups ]; then
 echo Creating directories
 sudo mkdir /media/external/backups
-sudo mkdir /media/external/backups/docker
-# sudo rm /media/external/backups/docker/*
+sudo mkdir -p /media/external/backups/docker
+fi
 
 today="$(date +%u)"
 
