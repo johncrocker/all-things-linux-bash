@@ -72,5 +72,6 @@ echo Backing up Home Directories
 sudo tar -zcf /media/external/backups/docker.tgz /home/jcrocker/src/all-things-docker
 sudo tar -zcf /media/external/backups/docker-private.tgz /home/jcrocker/docker-private
 sudo tar -zcf /media/external/backups/scripts.tgz /home/jcrocker/src/all-things-linux-bash
+sudo tar -zcf /media/external/backups/traefik-data.tgz /home/jcrocker/traefik-data
 
 echo Finish $(date)
