@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#sudo apt install skopeo jq
+#DOCKER_VERSIONS
+
+for imagename in $( docker image ls --format "{{.Repository}}" | sort); do
+count=$(echo "$imagename" | grep -o "/" | wc -l)
+url="docker://$imagename"
+
+	if (( count < 2 )); then
+		url="docker://docker.io/$imagename"
+	fi
+
+echo "$url"
+skopeo inspect --config "$url" | jq ".created"
+done
