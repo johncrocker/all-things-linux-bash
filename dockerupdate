@@ -1,16 +1,52 @@
 #!/bin/bash
 
-#sudo apt install skopeo jq
-#DOCKER_VERSIONS
+if ! command -v skopeo &>/dev/null; then
+	echo "Installing skopeo dependency"
+	sudo apt install skopeo -y
+fi
 
-for imagename in $( docker image ls --format "{{.Repository}}" | sort); do
-count=$(echo "$imagename" | grep -o "/" | wc -l)
-url="docker://$imagename"
+if ! command -v jq &>/dev/null; then
+	echo "Installing jq dependency"
+	sudo apt install jq -y
+fi
 
-	if (( count < 2 )); then
-		url="docker://docker.io/$imagename"
+echo "status,remote url,local created,remote created" >"$DOCKER_VERSIONS"
+
+for imageid in $(docker image ls -q); do
+	imagename=$(docker image ls --format "{{.ID}} {{.Repository}}:{{.Tag}}" | grep $imageid -w | cut -d " " -f 2)
+	count=$(echo "$imagename" | grep -o "/" | wc -l)
+	remoteurl="docker://$imagename"
+
+	if ((count < 2)); then
+		remoteurl="docker://docker.io/$imagename"
 	fi
 
-echo "$url"
-skopeo inspect --config "$url" | jq ".created"
+	localcreated=$(docker image inspect "$imagename" | jq ".[].Created" | tr -d '"')
+	remotecreated=$(skopeo inspect --config "$remoteurl" | jq ".created" | tr -d '"')
+	status="update-due"
+
+	if [ "$localcreated" = "$remotecreated" ]; then
+		echo "$imagename is up-to-date."
+		status="up-to-date"
+	else
+		echo "$imagename update-due, pulling update from remote $remoteurl."
+		docker pull "$imagename"
+		if [ $? -eq 0 ]; then
+			echo "Image pulled, restarting affected containers."
+			for containerid in $($ docker container ls -f "ancestor=$imagename" -q); do
+				docker restart "$containerid"
+			done
+			echo "Affected containers restarted."
+		else
+			echo "Something went wrong during the update, no containers have been restarted."
+		fi
+	fi
+
+	echo "$status,$remoteurl,$localcreated,$remotecreated" >>"$DOCKER_VERSIONS"
+
 done
+
+echo ""
+echo "Report saved to $DOCKER_VERSIONS"
+echo ""
+echo ""
