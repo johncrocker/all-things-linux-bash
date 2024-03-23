@@ -31,7 +31,7 @@ sudo nmap -sn -oG - $routes |
 		if [ "$ipaddress" = "$defaultgw" ]; then
 			printf "\033[0;34m$dnsindicator$ipaddress!$hostname!$macaddress!$vendor!$properties\033[0m\n" >>$PWD/netview.tmp
 		else
-			printf "$dnsindicator$ipaddress!$hostname!$macaddress!$vendor!$properties\n" >>$PWD/netview.tmp
+			printf "$ipaddress!$hostname!$macaddress!$vendor!$properties\n" >>$PWD/netview.tmp
 		fi
 	done
 
