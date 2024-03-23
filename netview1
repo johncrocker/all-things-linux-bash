@@ -1,0 +1,17 @@
+#/bin/bash
+routes=$(ip -o -f inet route show dev eth0 | sed -n \$p | awk '{print $1}')
+
+#nslookup $1 | grep "name = " | awk '{print $4}' | sed 's/\.$//'
+
+sudo nmap -sn -oX - $routes > $PWD/tmp.xml
+
+printf "        IP ADDRESS\tMAC ADDRESS\t   HOSTNAME\tVENDOR\n"
+cat $PWD/tmp.xml |  xmlstarlet sel -t -m '/nmaprun/host[status/@reason="arp-response"]' \
+     -v 'status[@rdeason="arp-response"]/@state' -o $'\t' \
+     -v 'address[@addrtype="ipv4"]/@addr' -o $'\t' \
+     -v 'address[@addrtype="mac"]/@addr' -o $'  ' \
+     -v 'hostnames/hostname[1]/@name' -o $'\t' \
+     -v 'address[@addrtype="mac"]/@vendor' -n
+
+
+rm $PWD/tmp.xml
