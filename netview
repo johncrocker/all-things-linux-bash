@@ -1,22 +1,20 @@
 #/bin/bash
 routes=$(ip -o -f inet route show dev eth0 | sed -n \$p | awk '{print $1}')
 
-printf "IP ADDRESS!HOSTNAME!MAC ADDRESS!VENDOR\n" > "$PWD/netview.tmp"
+printf "IP ADDRESS!HOSTNAME!MAC ADDRESS!VENDOR\n" >"$PWD/netview.tmp"
 
-sudo nmap -sn  -oG - $routes | 
-while read -r line || [[ "$line" ]];
-do
- [[ "$line" =~ ^[[:space:]]*# ]] && continue
+sudo nmap -sn -oG - $routes |
+	while read -r line || [[ "$line" ]]; do
+		[[ "$line" =~ ^[[:space:]]*# ]] && continue
 
-ipaddress="$(echo $line | awk '{print $2}')"
-result="$(sudo nmap -sn $ipaddress | grep "MAC Address:")"
-macaddress="$(echo $result | awk '{print $3}')"
-vendor="$(echo $result | awk -F'[()]' '{print $2}')"	
-hostname=$(nslookup $ipaddress | grep "name = " | awk '{print $4}' | sed 's/\.$//')	
+		ipaddress="$(echo $line | awk '{print $2}')"
+		result="$(sudo nmap -sn $ipaddress | grep "MAC Address:")"
+		macaddress="$(echo $result | awk '{print $3}')"
+		vendor="$(echo $result | awk -F'[()]' '{print $2}')"
+		hostname=$(nslookup $ipaddress | grep "name = " | awk '{print $4}' | sed 's/\.$//')
 
-printf  "$ipaddress!$hostname!$macaddress!$vendor\n" >>$PWD/netview.tmp
-done 
+		printf "$ipaddress!$hostname!$macaddress!$vendor\n" >>$PWD/netview.tmp
+	done
 
 column -t -s "!" $PWD/netview.tmp
-rm $PWD/netview.tmp 
-
+rm $PWD/netview.tmp
