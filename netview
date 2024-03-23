@@ -1,7 +1,8 @@
 #/bin/bash
 routes=$(ip -o -f inet route show dev eth0 | sed -n \$p | awk '{print $1}')
+defaultgw=$(sudo ip route | grep "default via" -w | awk '{print $3}')
 
-printf "IP ADDRESS!HOSTNAME!MAC ADDRESS!VENDOR\n" >"$PWD/netview.tmp"
+printf "IP ADDRESS!HOSTNAME!MAC ADDRESS!VENDOR!PROPERTIES\n" >"$PWD/netview.tmp"
 
 sudo nmap -sn -oG - $routes |
 	while read -r line || [[ "$line" ]]; do
@@ -12,8 +13,26 @@ sudo nmap -sn -oG - $routes |
 		macaddress="$(echo $result | awk '{print $3}')"
 		vendor="$(echo $result | awk -F'[()]' '{print $2}')"
 		hostname=$(nslookup $ipaddress | grep "name = " | awk '{print $4}' | sed 's/\.$//')
+		dnsindicator=""
+		gatewayindicator=""
 
-		printf "$ipaddress!$hostname!$macaddress!$vendor\n" >>$PWD/netview.tmp
+		for nameserver in $(grep "nameserver" /etc/resolv.conf | awk '{print $2}'); do
+			if [ "$nameserver" = "$ipaddress" ]; then
+				dnsindicator="DNS"
+			fi
+		done
+
+		if [ "$ipaddress" = "$defaultgw" ]; then
+			gatewayindicator="GATEWAY"
+		fi
+
+		properties="$gatewayindicator $dnsindicator"
+
+		if [ "$ipaddress" = "$defaultgw" ]; then
+			printf "\033[0;34m$dnsindicator$ipaddress!$hostname!$macaddress!$vendor!$properties\033[0m\n" >>$PWD/netview.tmp
+		else
+			printf "$dnsindicator$ipaddress!$hostname!$macaddress!$vendor!$properties\n" >>$PWD/netview.tmp
+		fi
 	done
 
 column -t -s "!" $PWD/netview.tmp
