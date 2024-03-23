@@ -11,7 +11,7 @@ if ! command -v jq &>/dev/null; then
 fi
 
 if [ -n "$DOCKER_VERSIONS" ]; then
-echo "status,remote url,local created,remote created" >"$DOCKER_VERSIONS"
+	echo "status,remote url,local created,remote created" >"$DOCKER_VERSIONS"
 fi
 
 for imageid in $(docker image ls -q); do
@@ -44,15 +44,15 @@ for imageid in $(docker image ls -q); do
 		fi
 	fi
 
-if [ -n "$DOCKER_VERSIONS" ]; then
-	echo "$status,$remoteurl,$localcreated,$remotecreated" >>"$DOCKER_VERSIONS"
-fi
+	if [ -n "$DOCKER_VERSIONS" ]; then
+		echo "$status,$remoteurl,$localcreated,$remotecreated" >>"$DOCKER_VERSIONS"
+	fi
 
 done
 
 if [ -n "$DOCKER_VERSIONS" ]; then
-echo ""
-echo "Report saved to $DOCKER_VERSIONS"
+	echo ""
+	echo "Report saved to $DOCKER_VERSIONS"
 fi
 
 echo ""
