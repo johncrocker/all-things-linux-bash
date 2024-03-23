@@ -10,7 +10,9 @@ if ! command -v jq &>/dev/null; then
 	sudo apt install jq -y
 fi
 
+if [ -n "$DOCKER_VERSIONS" ]; then
 echo "status,remote url,local created,remote created" >"$DOCKER_VERSIONS"
+fi
 
 for imageid in $(docker image ls -q); do
 	imagename=$(docker image ls --format "{{.ID}} {{.Repository}}:{{.Tag}}" | grep $imageid -w | cut -d " " -f 2)
@@ -42,11 +44,16 @@ for imageid in $(docker image ls -q); do
 		fi
 	fi
 
+if [ -n "$DOCKER_VERSIONS" ]; then
 	echo "$status,$remoteurl,$localcreated,$remotecreated" >>"$DOCKER_VERSIONS"
+fi
 
 done
 
+if [ -n "$DOCKER_VERSIONS" ]; then
 echo ""
 echo "Report saved to $DOCKER_VERSIONS"
+fi
+
 echo ""
 echo ""
