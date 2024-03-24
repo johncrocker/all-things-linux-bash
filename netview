@@ -1,4 +1,10 @@
-#/bin/bash
+#!/bin/bash
+
+if ! command -v column &>/dev/null; then
+	echo "Installing column dependency"
+	sudo apt install bsdutils -y
+fi
+
 routes=$(ip -o -f inet route show dev eth0 | sed -n \$p | awk '{print $1}')
 defaultgw=$(sudo ip route | grep "default via" -w | awk '{print $3}')
 selfmac=$(ip -o link show eth0 | cut -d " " -f 20)
