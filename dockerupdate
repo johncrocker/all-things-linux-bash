@@ -35,7 +35,7 @@ for imageid in $(docker image ls -q); do
 		docker pull "$imagename"
 		if [ $? -eq 0 ]; then
 			echo "Image pulled, restarting affected containers."
-			for containerid in $($ docker container ls -f "ancestor=$imagename" -q); do
+			for containerid in $( docker container ls -f "ancestor=$imagename" -q); do
 				docker restart "$containerid"
 			done
 			echo "Affected containers restarted."
