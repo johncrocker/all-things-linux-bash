@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function formatfile() {
+filename="$1"
+echo "Working on $filename"
+
+if [[ -f $filename ]]; then
+	cp "$filename" "$filename.bak"
+
+	shfmt "$filename" >"$filename.tmp"
+	if [[ "$?" -eq 0 ]]; then
+		mv "$filename.tmp" "$filename"
+		chmod +x "$filename"
+		echo "Success."
+	else
+		rm $filename.new
+		echo "Something went wrong."
+	fi
+else
+	echo "File not found."
+	exit 1
+fi
+
+}
+
+filepath="$1"
+
+formatfile "$filepath"

@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo vcgencmd measure_temp pmic
+sudo vcgencmd measure_temp

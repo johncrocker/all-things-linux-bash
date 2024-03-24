@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo Start $(date)
+
+#docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+docker image prune -a --filter "until=24h" -f
+
+echo Finished $(date)

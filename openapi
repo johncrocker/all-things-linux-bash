@@ -1,0 +1,8 @@
+#!/bin/bash
+#csharp
+#nodejs-express-server
+docker run --rm \
+	-v $PWD:/local openapitools/openapi-generator-cli generate \
+	-i /local/v1.44.yaml \
+	-g nodejs-express-server \
+	-o /local/out/

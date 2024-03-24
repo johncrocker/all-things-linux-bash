@@ -1,0 +1,37 @@
+#/bin/bash
+
+echo Start $( date )
+
+export DESTINATION="/var/lib/docker-data/volumes/pihole-stack_unbound-data/_data"
+export FILE_NAME="$DESTINATION/root.hints"
+export FILE_URL="https://www.internic.net/domain/named.root"
+
+sudo wget -q -O $FILE_NAME.new https://www.internic.net/domain/named.root
+
+md5Old=($(sudo md5sum $FILE_NAME | cut -d ' ' -f 1))
+md5New=($(sudo md5sum $FILE_NAME.new | cut -d ' ' -f 1))
+
+echo Existing root.hints: $md5Old
+echo New root.hints: $md5New
+
+if [ "$md5New" != "$md5Old" ] 
+then
+  echo Remote file changed, downloading new file  
+  echo Saving latest hints to $FILE_NANE
+  sudo rm $FILE_NAME.bak
+ 
+  docker stop unbound-dns
+  echo
+  
+  sudo cp $FILE_NAME $FILE_NAME.bak
+  sudo mv $FILE_NAME.new  $FILE_NAME -f
+ 
+  docker start unbound-dns
+  echo ""
+else
+  echo Remote unchanged
+  sudo rm $FILE_NAME.new
+fi
+
+echo
+echo Finished $( date ) 

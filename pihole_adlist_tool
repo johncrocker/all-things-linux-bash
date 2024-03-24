@@ -1,0 +1,7 @@
+#/bin/bash
+
+if [ -n "$(docker ps -f "name=pihole" -f "status=running" -q)" ]; then
+	docker exec -i -t pihole /usr/local/share/bin/pihole_adlist_tool "$@"
+else
+	echo Pi-Hole is not running
+fi
