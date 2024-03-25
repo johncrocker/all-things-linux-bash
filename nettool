@@ -40,6 +40,11 @@ function main() {
 
 	rm /tmp/nettool.tmp
 
+array[$i]="Scan"
+((j++))
+array[($i + 1)]="Refresh Host List"
+((i = ($i + 2)))
+
 	TERMINAL=$(tty)
 	HEIGHT=20
 	WIDTH=76
