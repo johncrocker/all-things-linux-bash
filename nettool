@@ -23,7 +23,7 @@ options="$(
 			result="$(sudo nmap -sn $ipaddress | grep "MAC Address:")"
 			hostname=$(nslookup $ipaddress | grep "name = " | awk '{print $4}' | sed 's/\.$//')
 
-			if [ "$hostnsme" = "" ]; then
+			if [ "$hostname" = "" ]; then
 				hostname="-"
 			fi
 			echo "$ipaddress $hostname"
