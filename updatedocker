@@ -1,8 +1,0 @@
-#/bin/bash
-
-echo Start $( date )
-
-docker run --rm --name watchtower -v /var/run/docker.sock:/var/run/docker.sock \
-              containrrr/watchtower --run-once
- 
-echo Finished $( date )
