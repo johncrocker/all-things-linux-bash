@@ -1,0 +1,7 @@
+#!/bin/bash
+
+IEEE_URL="https://standards-oui.ieee.org/"
+NMAP_OUI="/usr/share/nmap/nmap-mac-prefixes"
+OUI_DATA="ieee_oui_data.txt"
+
+curl "$IEEE_URL"

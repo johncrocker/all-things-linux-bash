@@ -14,8 +14,15 @@ if [ -n "$DOCKER_VERSIONS" ]; then
 	echo "status,remote url,local created,remote created" >"$DOCKER_VERSIONS"
 fi
 
-for imageid in $(docker image ls -q); do
+for imageidsha in $(docker inspect --format='{{.Image}}' $(docker ps -aq)); do
+	imageid="${imageidsha:7:12}"
 	imagename=$(docker image ls --format "{{.ID}} {{.Repository}}:{{.Tag}}" | grep $imageid -w | cut -d " " -f 2)
+	tagname=$(docker image ls --format "{{.ID}} {{.Tag}}" | grep $imageid -w | cut -d " " -f 2)
+
+	if [[ "$tagname" = "<none>" ]]; then
+		continue
+	fi
+
 	count=$(echo "$imagename" | grep -o "/" | wc -l)
 	remoteurl="docker://$imagename"
 
@@ -35,8 +42,18 @@ for imageid in $(docker image ls -q); do
 		docker pull "$imagename"
 		if [ $? -eq 0 ]; then
 			echo "Image pulled, restarting affected containers."
-			for containerid in $( docker container ls -f "ancestor=$imagename" -q); do
-				docker restart "$containerid"
+			for containerid in $( docker container ls -f "ancestor=$imageid" -q); do
+				projectname=$(docker inspect $containerid  --format '{{index .Config.Labels "com.docker.compose.project" }}')
+  				configfiles=$(docker inspect $containerid --format '{{index .Config.Labels "com.docker.compose.project.config_files" }}')
+  				workingdir=$(docker inspect $containerid --format '{{index .Config.Labels "com.docker.compose.project.working_dir" }}')
+
+				if [[ "$projectname" = "" ]]; then
+				#	docker restart "$containerid"
+					echo "docker restart"
+				else90
+					echo "docker compose"
+		#
+				fi
 			done
 			echo "Affected containers restarted."
 		else
@@ -49,6 +66,10 @@ for imageid in $(docker image ls -q); do
 	fi
 
 done
+
+echo "Removing dangling images."
+docker rmi $(docker image ls -q -f dangling=true)
+echo "Done."
 
 if [ -n "$DOCKER_VERSIONS" ]; then
 	echo ""

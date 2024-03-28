@@ -2,7 +2,7 @@
 
 echo Start $( date )
 
-export DESTINATION="/var/lib/docker-data/volumes/pihole-stack_unbound-data/_data"
+export DESTINATION="/var/lib/docker-data/volumes/unbound-dns-stack_data/_data"
 export FILE_NAME="$DESTINATION/root.hints"
 export FILE_URL="https://www.internic.net/domain/named.root"
 

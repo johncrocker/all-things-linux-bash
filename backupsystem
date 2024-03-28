@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 echo Start $(date)
 
@@ -53,25 +53,10 @@ for containername in $(docker ps --format "{{.Names}}" -a | sort); do
 	fi
 done
 
-#echo Backing up Docker Volumes
-
-#for volumename in $(docker volume ls -q); do
-#	echo Backing up volume $volumename
-#
-#	sudo rm /media/external/backups/docker/volume-$volumename.tar.gz
-#
-#	sudo docker run --rm \
-#		--mount source=$volumename,target=/$volumename \
-#		-v /media/external/backups/docker:/backup \
-#		busybox \
-#		tar -czvf /backup/volume-$volumename.tar.gz $volumename
-#
-#done
-
 echo Backing up Home Directories
 sudo tar -zcf /media/external/backups/docker.tgz /home/jcrocker/src/all-things-docker
 sudo tar -zcf /media/external/backups/docker-private.tgz /home/jcrocker/docker-private
 sudo tar -zcf /media/external/backups/scripts.tgz /home/jcrocker/src/all-things-linux-bash
-sudo tar -zcf /media/external/backups/traefik-data.tgz /home/jcrocker/traefik-data
+sudo tar -zcf /media/external/backups/docker-system.tgz /home/jcrocker/docker-system
 
 echo Finish $(date)
