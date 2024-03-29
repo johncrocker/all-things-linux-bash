@@ -42,17 +42,17 @@ for imageidsha in $(docker inspect --format='{{.Image}}' $(docker ps -aq)); do
 		docker pull "$imagename"
 		if [ $? -eq 0 ]; then
 			echo "Image pulled, restarting affected containers."
-			for containerid in $( docker container ls -f "ancestor=$imageid" -q); do
-				projectname=$(docker inspect $containerid  --format '{{index .Config.Labels "com.docker.compose.project" }}')
-  				configfiles=$(docker inspect $containerid --format '{{index .Config.Labels "com.docker.compose.project.config_files" }}')
-  				workingdir=$(docker inspect $containerid --format '{{index .Config.Labels "com.docker.compose.project.working_dir" }}')
+			for containerid in $(docker container ls -f "ancestor=$imageid" -q); do
+				projectname=$(docker inspect $containerid --format '{{index .Config.Labels "com.docker.compose.project" }}')
+				configfiles=$(docker inspect $containerid --format '{{index .Config.Labels "com.docker.compose.project.config_files" }}')
+				workingdir=$(docker inspect $containerid --format '{{index .Config.Labels "com.docker.compose.project.working_dir" }}')
 
 				if [[ "$projectname" = "" ]]; then
-				#	docker restart "$containerid"
+					#	docker restart "$containerid"
 					echo "docker restart"
-				else90
+					else90
 					echo "docker compose"
-		#
+					#
 				fi
 			done
 			echo "Affected containers restarted."
