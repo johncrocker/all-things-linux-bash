@@ -13,7 +13,7 @@ today="$(date +%u)"
 if [ -n "$(docker ps -f "name=pihole" -f "status=running" -q)" ]; then
 	echo Runing PiHole Teleport
 	docker exec pihole pihole -a -t /etc/pihole/teleport.tar.gz
-	sudo mv /var/lib/docker-data/volumes/pihole-stack_pihole/_data/teleport.tar.gz /media/external/backups/teleport.tar.gz
+	sudo mv $DOCKER_VOLUMES/pihole-stack_pihole/_data/teleport.tar.gz /media/external/backups/teleport.tar.gz
 else
 	echo Skipping Pi-Hole steps. Pi-Hole is not running!!
 fi
