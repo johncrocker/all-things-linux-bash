@@ -2,7 +2,7 @@
 
 echo Start $(date)
 
-export DESTINATION="$DOCKER_VOLUMES/unbound-dns-stack_data/_data"
+export DESTINATION="/home/jcrocker/docker-system/stacks/unbound-dns-stack/config"
 export FILE_NAME="$DESTINATION/root.hints"
 export FILE_URL="https://www.internic.net/domain/named.root"
 
