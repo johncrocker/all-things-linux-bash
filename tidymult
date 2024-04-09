@@ -23,7 +23,7 @@ fi
 
 }
 
-for file in $1; do
+for file in $(find $1 -name "*.sh" 2>/dev/null); do
 echo $file
 # [[ -f"file" && -r "$file" ]] && formatfile "$file"
 done
