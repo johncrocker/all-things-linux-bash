@@ -11,7 +11,7 @@ routes=$(ip -o -f inet route show dev eth0 | sed -n \$p | awk '{print $1}')
 defaultgw=$(sudo ip route | grep "default via" -w | awk '{print $3}')
 selfmac=$(ip -o link show eth0 | cut -d " " -f 20)
 selfip=$(ip addr show dev eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
- broadcastip=""
+broadcastip=""
 
 printf "$(
 	printf "IP ADDRESS!HOSTNAME!MAC ADDRESS!VENDOR!PROPERTIES\n"

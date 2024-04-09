@@ -23,7 +23,7 @@ fi
 
 }
 
-
-for file in $(find $1 2>/dev/null); do
- [[ -f"file" && -r "$file" ]] && formatfile "$file"
+for file in $1; do
+echo $file
+# [[ -f"file" && -r "$file" ]] && formatfile "$file"
 done
