@@ -23,9 +23,7 @@ fi
 
 }
 
-filepath="$1"
 
-for file in "$filepath"; do
+for file in $(find $1 2>/dev/null); do
  [[ -f"file" && -r "$file" ]] && formatfile "$file"
 done
-formatfile "$filepath"
