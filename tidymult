@@ -10,6 +10,7 @@ if [[ -f $filename ]]; then
 	shfmt "$filename" >"$filename.tmp"
 	if [[ "$?" -eq 0 ]]; then
 		mv "$filename.tmp" "$filename"
+		rm "$filename.bak"
 		chmod +x "$filename"
 		echo "Success."
 	else
