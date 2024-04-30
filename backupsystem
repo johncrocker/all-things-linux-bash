@@ -22,4 +22,7 @@ sudo tar -zcf /media/external/backups/docker.tgz /home/jcrocker/src/all-things-d
 sudo tar -zcf /media/external/backups/docker-private.tgz /home/jcrocker/docker-private
 sudo tar -zcf /media/external/backups/scripts.tgz /home/jcrocker/src/all-things-linux-bash
 
+sudo tar -zcf /media/external/backups/filebrowser.tgz /media/filebrowser
+
+
 echo Finish $(date)
