@@ -1,0 +1,60 @@
+#!/bin/bash
+
+if ! command -v column &>/dev/null; then
+	echo "Installing column dependency"
+	sudo apt install bsdutils -y
+fi
+
+# sudo nmap -O  192.168.1.201 | grep -w "Running:" | cut -d ":" -f 2- | awk "{$1=$1};1"
+
+routes=$(ip -o -f inet route show dev eth0 | sed -n \$p | awk '{print $1}')
+defaultgw=$(sudo ip route | grep "default via" -w | awk '{print $3}')
+selfmac=$(ip -o link show eth0 | cut -d " " -f 20)
+selfip=$(ip addr show dev eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+broadcastip=""
+
+	sudo nmap -sn -oG - $routes |
+		while read -r line || [[ "$line" ]]; do
+			[[ "$line" =~ ^[[:space:]]*# ]] && continue
+			ipaddress="$(echo $line | awk '{print $2}')"
+			macaddress=""
+			vendor=""
+			hostname=""
+			if [[ $ipaddress == *.255 ]]; then
+				# Exclude Broadcast IP
+				broadcastip="$ipaddress"
+			else
+				result="$(sudo nmap -sn $ipaddress | grep "MAC Address:")"
+				macaddress="$(echo $result | awk '{print $3}')"
+				vendor="$(echo $result | awk -F'[()]' '{print $2}')"
+				hostname=$(nslookup $ipaddress | grep "name = " | awk '{print $4}' | sed '1p;d')
+				dnsindicator=""
+				gatewayindicator=""
+
+				for nameserver in $(grep "nameserver" /etc/resolv.conf | awk '{print $2}'); do
+					if [ "$nameserver" = "$ipaddress" ]; then
+						dnsindicator="DNS"
+					fi
+				done
+
+				if [ "$ipaddress" = "$defaultgw" ]; then
+					gatewayindicator="GATEWAY"
+				fi
+
+				properties="$gatewayindicator $dnsindicator $osname"
+
+				if [ -z "$macaddress" ]; then
+					if [ "$ipaddress" = "$selfip" ]; then
+						macaddress=$(echo "$selfmac" | sed 's/[a-z]/\U&/g')
+					fi
+				fi
+
+				hostname=$(echo $hostname | sed 's/\\032/_/g')
+
+				printf "UPDATE now SET NAME='%s' WHERE MAC='%s';\n" "${hostname// /_}" "${macaddress,,}"
+				printf "UPDATE history SET NAME='%s' WHERE MAC='%s';\n" "${hostname// /_}" "${macaddress,,}"
+
+
+			fi
+		done
+
